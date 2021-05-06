@@ -19,15 +19,22 @@ function createListItem() {
   checkbox.type = "checkbox";
   label.appendChild(checkbox);
   li.appendChild(label);
-  li.appendChild(createButtonToList("Edit"));
-  li.appendChild(createButtonToList("Remove"));
+  addButtonToElement("Edit", li);
+  addButtonToElement("Remove", li);
   ul.appendChild(li);
 }
 
-function createButtonToList(type) {
+/**
+ * Adds a button to an element
+ * @param {string} type - Text of the button
+ * @param {element} element - element were the button will be appended
+ * @returns the button element
+ */
+function addButtonToElement(type, element) {
   const btn = document.createElement("button");
   btn.textContent = type;
   btn.className = "js-" + type.toLowerCase();
+  element.appendChild(btn);
   return btn;
 }
 
