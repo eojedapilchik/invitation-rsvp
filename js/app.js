@@ -18,16 +18,14 @@ mainDiv.insertBefore(div, ul);
 filterCheckBox.addEventListener("change", (e) => {
   const isChecked = e.target.checked;
   const listInvitees = ul.children;
-  if (isChecked) {
-    for (const invitee of listInvitees) {
+  for (const invitee of listInvitees) {
+    if (isChecked) {
       if (invitee.className === "responded") {
         invitee.style.display = "";
       } else {
         invitee.style.display = "none";
       }
-    }
-  } else {
-    for (const invitee of listInvitees) {
+    } else {
       invitee.style.display = "";
     }
   }
@@ -43,33 +41,25 @@ form.addEventListener("submit", (e) => {
  * Creates a List Item of a guest or invitee to the list of invitees.
  */
 function createListItem() {
-  const li = document.createElement("li");
-  const span = document.createElement("span");
-  span.textContent = input.value;
-  li.appendChild(span);
-  const label = document.createElement("label");
-  label.textContent = "Confirmed";
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  label.appendChild(checkbox);
-  li.appendChild(label);
-  addButtonToElement("Edit", li);
-  addButtonToElement("Remove", li);
-  ul.appendChild(li);
-}
+  function createElement(elementName, property, value) {
+    const element = document.createElement(elementName);
+    element[property] = value;
+    return element;
+  }
 
-/**
- * Adds a button to an element
- * @param {string} type - Text of the button
- * @param {element} element - element were the button will be appended
- * @returns the button element
- */
-function addButtonToElement(type, element) {
-  const btn = document.createElement("button");
-  btn.textContent = type;
-  btn.className = "js-" + type.toLowerCase();
-  element.appendChild(btn);
-  return btn;
+  function createAndAppendElement(parent, elementName, property, value) {
+    const element = createElement(elementName, property, value);
+    parent.appendChild(element);
+    return element;
+  }
+
+  const li = document.createElement("li");
+  createAndAppendElement(li, "span", "textContent", input.value);
+  const label = createAndAppendElement(li, "label", "textContent", "Confirmed");
+  createAndAppendElement(label, "input", "type", "checkbox");
+  createAndAppendElement(li, "button", "textContent", "Edit");
+  createAndAppendElement(li, "button", "textContent", "Remove");
+  ul.appendChild(li);
 }
 
 // to handle the event of the change - confirmed checkbox-
@@ -87,45 +77,38 @@ ul.addEventListener("click", (e) => {
     const button = e.target;
     const li = e.target.parentNode;
     const ul = li.parentNode;
-    if (button.className == "js-remove") {
-      ul.removeChild(li);
-    } else if (button.className === "js-edit") {
-      if (button.textContent === "Edit") {
-        editStateListItem(li, button);
-      } else {
-        saveStateListItem(li, button);
-      }
-    }
+    const action = button.textContent.toLowerCase();
+    const inviteeActions = {
+      remove: () => {
+        ul.removeChild(li);
+      },
+      edit: () => {
+        const span = li.firstElementChild;
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = span.textContent;
+        li.insertBefore(input, span);
+        li.removeChild(span);
+        button.textContent = "Save";
+      },
+      save: () => {
+        const span = document.createElement("span");
+        const input = li.firstElementChild;
+        span.textContent = input.value;
+        li.insertBefore(span, input);
+        li.removeChild(input);
+        button.textContent = "Edit";
+      },
+    };
+
+    inviteeActions[action]();
+    /*
+    if (button.textContent == "Remove") {
+      inviteeActions.remove();
+    } else if (button.textContent === "Edit") {
+      inviteeActions.edit(li, button);
+    } else {
+      inviteeActions.save(li, button);
+    }*/
   }
 });
-
-/**
- * Puts the list item into edit State
- *
- * @param {element} li - list item to put in edit state
- * @param {button} button - edit button
- */
-function editStateListItem(li, button) {
-  const span = li.firstElementChild;
-  const input = document.createElement("input");
-  input.type = "text";
-  input.value = span.textContent;
-  li.insertBefore(input, span);
-  li.removeChild(span);
-  button.textContent = "Save";
-}
-
-/**
- * Puts the list item into de saved state
- *
- * @param {element} li - list item to put in edit state
- * @param {button} button - edit button
- */
-function saveStateListItem(li, button) {
-  const span = document.createElement("span");
-  const input = li.firstElementChild;
-  span.textContent = input.value;
-  li.insertBefore(span, input);
-  li.removeChild(input);
-  button.textContent = "Edit";
-}
