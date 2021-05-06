@@ -10,9 +10,14 @@ form.addEventListener("submit", (e) => {
   input.value = "";
 });
 
+/**
+ * Creates a List Item of a guest or invitee to the list of invitees.
+ */
 function createListItem() {
   const li = document.createElement("li");
-  li.textContent = input.value;
+  const span = document.createElement("span");
+  span.textContent = input.value;
+  li.appendChild(span);
   const label = document.createElement("label");
   label.textContent = "Confirmed";
   const checkbox = document.createElement("input");
@@ -49,9 +54,24 @@ ul.addEventListener("change", (e) => {
 
 //handle click bubbled up from the remove button
 ul.addEventListener("click", (e) => {
-  if (e.target.tagName === "BUTTON" && e.target.className == "js-remove") {
+  if (e.target.tagName === "BUTTON") {
+    const button = e.target;
     const li = e.target.parentNode;
     const ul = li.parentNode;
-    ul.removeChild(li);
+    if (button.className == "js-remove") {
+      ul.removeChild(li);
+    } else if (button.className === "js-edit") {
+      if (button.textContent === "Edit") {
+        const span = li.firstElementChild;
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = span.textContent;
+        li.insertBefore(input, span);
+        li.removeChild(span);
+        button.textContent = "Save";
+      } else {
+        console.log("save");
+      }
+    }
   }
 });
