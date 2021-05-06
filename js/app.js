@@ -62,16 +62,42 @@ ul.addEventListener("click", (e) => {
       ul.removeChild(li);
     } else if (button.className === "js-edit") {
       if (button.textContent === "Edit") {
-        const span = li.firstElementChild;
-        const input = document.createElement("input");
-        input.type = "text";
-        input.value = span.textContent;
-        li.insertBefore(input, span);
-        li.removeChild(span);
-        button.textContent = "Save";
+        editStateListItem(li, button);
       } else {
-        console.log("save");
+        saveStateListItem(li, button);
       }
     }
   }
 });
+
+/**
+ * Puts the list item into edit State
+ *
+ * @param {element} li - list item to put in edit state
+ * @param {button} button - edit button
+ */
+function editStateListItem(li, button) {
+  const span = li.firstElementChild;
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = span.textContent;
+  li.insertBefore(input, span);
+  li.removeChild(span);
+  button.textContent = "Save";
+}
+
+/**
+ * Puts the list item into de saved state
+ *
+ * @param {element} li - list item to put in edit state
+ * @param {button} button - edit button
+ */
+
+function saveStateListItem(li, button) {
+  const span = document.createElement("span");
+  const input = li.firstElementChild;
+  span.textContent = input.value;
+  li.insertBefore(span, input);
+  li.removeChild(input);
+  button.textContent = "Edit";
+}
