@@ -19,12 +19,16 @@ function createListItem() {
   checkbox.type = "checkbox";
   label.appendChild(checkbox);
   li.appendChild(label);
-
-  const btnRemove = document.createElement("button");
-  btnRemove.textContent = "Remove";
-  btnRemove.className = "js-remove";
-  li.appendChild(btnRemove);
+  li.appendChild(createButtonToList("Edit"));
+  li.appendChild(createButtonToList("Remove"));
   ul.appendChild(li);
+}
+
+function createButtonToList(type) {
+  const btn = document.createElement("button");
+  btn.textContent = type;
+  btn.className = "js-" + type.toLowerCase();
+  return btn;
 }
 
 // to handle the event of the change - confirmed checkbox-
